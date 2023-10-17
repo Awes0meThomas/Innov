@@ -1,44 +1,30 @@
-#!/usr/bin/env python3
-#-- coding: utf-8 --
 import RPi.GPIO as GPIO
 import time
+import RPi.GPIO as GPIO
+from gpiozero import Servo
 
 
-#Set function to calculate percent from angle
-def angle_to_percent (angle) :
-    if angle > 180 or angle < 0 :
-        return False
-
-    start = 4
-    end = 12.5
-    ratio = (end - start)/180 #Calcul ratio from angle to percent
-
-    angle_as_percent = angle * ratio
-
-    return start + angle_as_percent
+IR_PIN = 17  
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(IR_PIN, GPIO.IN)
 
 
-GPIO.setmode(GPIO.BOARD) #Use Board numerotation mode
-GPIO.setwarnings(False) #Disable warnings
+SERVO_PIN = 12
+servo = Servo(SERVO_PIN)
 
-#Use pin 12 for PWM signal
-pwm_gpio = 12
-frequence = 50
-GPIO.setup(pwm_gpio, GPIO.OUT)
-pwm = GPIO.PWM(pwm_gpio, frequence)
+try:
+    while True:
+        if GPIO.input(IR_PIN) == GPIO.HIGH:
+            print("Objet détecté. Attente de 1 seconde...")
+            time.sleep(1)
+            print("Rotation du servomoteur de 70 degrés.")
+            servo.value = 0.5  
+            servo.value = None  
+        else:
+            time.sleep(0.1)
 
-#Init at 0°
-pwm.start(angle_to_percent(0))
-time.sleep(1)
+except KeyboardInterrupt:
+    print("Arrêt du programme")
 
-#Go at 90°
-pwm.ChangeDutyCycle(angle_to_percent(90))
-time.sleep(1)
-
-#Finish at 180°
-pwm.ChangeDutyCycle(angle_to_percent(180))
-time.sleep(1)
-
-#Close GPIO & cleanup
-pwm.stop()
-GPIO.cleanup()
+finally:
+    GPIO.cleanup()
