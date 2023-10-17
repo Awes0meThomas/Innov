@@ -15,7 +15,7 @@ servo = Servo(SERVO_PIN)
 try:
     while True:
        if GPIO.input(capteur):
-           print "Mouvement detecte"
+           print ("Mouvement detecte")
            time.sleep(1)
            print("Rotation du servomoteur de 70 degrés.")
            servo.value = 0.5  # Rotation du servomoteur de 70 degrés (valeur à ajuster si nécessaire)
