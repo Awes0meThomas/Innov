@@ -22,8 +22,8 @@ try:
            time.sleep(1)
            print("Retour du servomoteur à la position d'origine.")
            servo.value = 0  # Retour à la position d'origine
-        else:
-            time.sleep(0.1)
+       else:
+           time.sleep(0.1)
 
 except KeyboardInterrupt:
     print("Arrêt du programme")
