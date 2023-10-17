@@ -8,7 +8,7 @@ GPIO.setmode(GPIO.BCM)
 GPIO.setup(IR_PIN, GPIO.IN)
 
 
-SERVO_PIN = 12
+SERVO_PIN = 18
 servo = Servo(SERVO_PIN)
 
 try:
