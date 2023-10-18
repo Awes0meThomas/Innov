@@ -22,14 +22,12 @@ try:
     while True:
         if GPIO.input(IR_SENSOR_PIN) == GPIO.HIGH:
             print("Objet détecté !")
-            time.sleep(3)  # Attendre 1 seconde
-            pwm.start(DUTY_CYCLE_START)  # Tourner de 70 degrés (angle de départ)
-            time.sleep(3)  # Attendre 1 seconde
-            pwm.ChangeDutyCycle(DUTY_CYCLE_END)  # Retourner à la position d'origine (angle de 0 degrés)
-            time.sleep(3)  # Attendre 1 seconde
+            time.sleep(1)  # Attendre 1 seconde
+            pwm.start(DUTY_CYCLE_START)  # Tourner de 70 degrés (angle de départ)  # Attendre 1 seconde
+            pwm.ChangeDutyCycle(DUTY_CYCLE_END)  # Retourner à la position d'origine (angle de 0 degrés)  # Attendre 1 seconde
             pwm.ChangeDutyCycle(DUTY_CYCLE_START)  # Réinitialiser la position (angle de départ)
         else:
-            time.sleep(0.1)  # Attendre un court instant avant de vérifier à nouveau
+            time.sleep(3)  # Attendre un court instant avant de vérifier à nouveau
 
 except KeyboardInterrupt:
     pass
