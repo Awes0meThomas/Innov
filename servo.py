@@ -23,4 +23,4 @@ while True:
         rotate_servo(70)
 
         # Retour à la position d'origine
-        rotate_servo(-70)
+        rotate_servo(0)
