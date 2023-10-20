@@ -3,7 +3,7 @@ import time
 from gpiozero import Servo
 
 # Configuration des broches pour le capteur infrarouge et le servomoteur
-capteur_infrarouge_pin = 17  # Remplacez par le numéro de la broche de votre capteur IR
+capteur_infrarouge_pin = 19  # Remplacez par le numéro de la broche de votre capteur IR
 servomoteur_pin = 18         # Remplacez par le numéro de la broche de votre servomoteur
 
 # Initialisation de la bibliothèque GPIO
