@@ -16,6 +16,7 @@ def rotate_servo(angle):
 while True:
     # Lecture du capteur infrarouge
     if GPIO.input(19) == GPIO.HIGH:
+        print("objet detecté")
         # Si un objet est détecté, rotation du servomoteur
         rotate_servo(70)
         time.sleep(1)
