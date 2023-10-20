@@ -1,35 +1,24 @@
 import RPi.GPIO as GPIO
 import time
-from gpiozero import Servo
 
-# Configuration des broches pour le capteur infrarouge et le servomoteur
-capteur_infrarouge_pin = 19  # Remplacez par le numéro de la broche de votre capteur IR
-servomoteur_pin = 18         # Remplacez par le numéro de la broche de votre servomoteur
-
-# Initialisation de la bibliothèque GPIO
+# Définition des broches GPIO
 GPIO.setmode(GPIO.BCM)
-GPIO.setup(capteur_infrarouge_pin, GPIO.IN)
+GPIO.setup(19, GPIO.IN)  # Capteur infrarouge
+GPIO.setup(18, GPIO.OUT)  # Servomoteur
 
-# Configuration du servomoteur
-servo = Servo(servomoteur_pin)
+# Définition de la fonction de rotation du servomoteur
+def rotate_servo(angle):
+    GPIO.output(18, True)
+    time.sleep(angle / 180)
+    GPIO.output(18, False)
 
-objet_detecte = False
+# Boucle principale
+while True:
+    # Lecture du capteur infrarouge
+    if GPIO.input(19) == GPIO.HIGH:
+        # Si un objet est détecté, rotation du servomoteur
+        rotate_servo(70)
+        time.sleep(1)
+        rotate_servo(0)
 
-try:
-    while True:
-        if GPIO.input(capteur_infrarouge_pin) and not objet_detecte:
-            objet_detecte = True
-            print("Objet détecté")
-            time.sleep(1)  # Attendez 1 seconde
-
-            # Tourner le servomoteur de 70 degrés
-            servo.value = 0.5
-            time.sleep(1)
-            servo.value = 0  # Revenir à la position de base (0 degré)
-            objet_detecte = False  # Réinitialisez l'état de détection
-
-except KeyboardInterrupt:
-    pass
-
-# Nettoyer et réinitialiser les broches GPIO
-GPIO.cleanup()
+    time.sleep(0.1)
