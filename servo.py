@@ -1,55 +1,47 @@
 import RPi.GPIO as GPIO
 import time
+from gpiozero import Servo
 
-IR_EMITTER_PIN = 17  
-PHOTODETECTOR_PIN = 19  
-SERVO_PIN = 17  
 
-PWM_FREQUENCY = 50
-DUTY_CYCLE_START = 2.5
-DUTY_CYCLE_END = 12.5
-
+IR_PIN = 19  
 GPIO.setmode(GPIO.BCM)
-GPIO.setup(IR_EMITTER_PIN, GPIO.OUT)
-GPIO.setup(PHOTODETECTOR_PIN, GPIO.IN)
-GPIO.setup(SERVO_PIN, GPIO.OUT)
+GPIO.setup(IR_PIN, GPIO.IN)
+GPIO.setup(23, GPIO.IN)  
+GPIO.setup(17, GPIO.OUT)  
 
-pwm = GPIO.PWM(SERVO_PIN, PWM_FREQUENCY)
 
-object_detected = False
-laser_on = True  
+SERVO_PIN = 18  
+servo = Servo(SERVO_PIN)
+def rotate_servo(angle):
+    GPIO.output(17, True)
+    time.sleep(angle / 180)
+    GPIO.output(17, False)
 
 try:
     while True:
-     
-        GPIO.output(IR_EMITTER_PIN, GPIO.HIGH if laser_on else GPIO.LOW)
-        
-        
-        if GPIO.input(PHOTODETECTOR_PIN) == GPIO.LOW and not object_detected:
-            print("Objet détecté !")
-            object_detected = True
-            laser_on = False  
-
-            
-            time.sleep(1)
-
-            
-            pwm.start(DUTY_CYCLE_START)
-            time.sleep(1)
-
-           
-            pwm.ChangeDutyCycle(DUTY_CYCLE_END)
-            time.sleep(1)
-
-            
-            pwm.ChangeDutyCycle(DUTY_CYCLE_START)
-            object_detected = False
-            laser_on = True  
-
-        time.sleep(0.1)
+       if GPIO.input(capteur):
+           print ("Mouvement detecte")
+           time.sleep(1)
+           print("Rotation du servomoteur de 70 degrés.")
+           servo.value = 0.5  
+           time.sleep(1)
+           print("Retour du servomoteur à la position d'origine.")
+           servo.value = 0  
+       else:
+           time.sleep(0.1)
+# Boucle principale
+while True:
+    # Si le capteur infrarouge détecte quelque chose
+    if GPIO.input(23) == GPIO.HIGH:
+        # Attendre une seconde
+        time.sleep(1)
 
 except KeyboardInterrupt:
-    pass
+    print("Arrêt du programme")
+        # Rotation du servo moteur de 70 degrés
+        rotate_servo(70)
 
-pwm.stop()
-GPIO.cleanup()
+finally:
+    GPIO.cleanup()
+        # Retour à la position d'origine
+        rotate_servo(-70)
