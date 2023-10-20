@@ -13,9 +13,12 @@ GPIO.setup(capteur_infrarouge_pin, GPIO.IN)
 # Configuration du servomoteur
 servo = Servo(servomoteur_pin)
 
+objet_detecte = False
+
 try:
     while True:
-        if GPIO.input(capteur_infrarouge_pin):
+        if GPIO.input(capteur_infrarouge_pin) and not objet_detecte:
+            objet_detecte = True
             print("Objet détecté")
             time.sleep(1)  # Attendez 1 seconde
 
@@ -23,6 +26,7 @@ try:
             servo.value = 0.5
             time.sleep(1)
             servo.value = 0  # Revenir à la position de base (0 degré)
+            objet_detecte = False  # Réinitialisez l'état de détection
 
 except KeyboardInterrupt:
     pass
