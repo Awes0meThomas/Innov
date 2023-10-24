@@ -19,7 +19,6 @@ GPIO.setup(pwm_gpio, GPIO.OUT)
 pwm = GPIO.PWM(pwm_gpio, frequence)
 
 pin_capteur = 19
-GPIO.setmode(GPIO.BCM)
 GPIO.setup(pin_capteur, GPIO.IN)
 
 pwm.start(angle_to_percent(0))
