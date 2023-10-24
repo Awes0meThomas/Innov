@@ -9,7 +9,7 @@ def angle_to_percent(angle):
     ratio = (end - start) / 180
     angle_as_percent = angle * ratio
     return start + angle_as_percent
-
+GPIO.setmode(GPIO.BCM)
 GPIO.setmode(GPIO.BOARD)
 GPIO.setwarnings(False)
 
@@ -19,6 +19,7 @@ GPIO.setup(pwm_gpio, GPIO.OUT)
 pwm = GPIO.PWM(pwm_gpio, frequence)
 
 infrared_pin = 17
+
 GPIO.setup(infrared_pin, GPIO.IN)
 
 
