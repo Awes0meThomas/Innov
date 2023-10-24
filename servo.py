@@ -9,18 +9,18 @@ def angle_to_percent(angle):
     ratio = (end - start) / 180
     angle_as_percent = angle * ratio
     return start + angle_as_percent
-GPIO.setmode(GPIO.BCM)
+
 GPIO.setmode(GPIO.BOARD)
 GPIO.setwarnings(False)
 
-pwm_gpio = 12
+pwm_gpio = 18
 frequence = 50
 GPIO.setup(pwm_gpio, GPIO.OUT)
 pwm = GPIO.PWM(pwm_gpio, frequence)
 
-infrared_pin = 17
-
-GPIO.setup(infrared_pin, GPIO.IN)
+pin_capteur = 17
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(pin_capteur, GPIO.IN)
 
 
 pwm.start(angle_to_percent(0))
@@ -28,7 +28,7 @@ time.sleep(1)
 
 try:
     while True:
-        if GPIO.input(infrared_pin)==GPIO.LOW:
+        if GPIO.input(pin_capteur) == GPIO.LOW:
             pwm.ChangeDutyCycle(angle_to_percent(70))
             time.sleep(1)
             pwm.ChangeDutyCycle(angle_to_percent(0))
