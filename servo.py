@@ -27,7 +27,7 @@ time.sleep(1)
 
 try:
     while True:
-        if infrared_pin==GPIO.LOW:
+        if GPIO.input(infrared_pin)==GPIO.LOW:
             pwm.ChangeDutyCycle(angle_to_percent(70))
             time.sleep(1)
             pwm.ChangeDutyCycle(angle_to_percent(0))
