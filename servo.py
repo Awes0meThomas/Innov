@@ -25,8 +25,9 @@ try:
     while True:
         if GPIO.input(pin_capteur) == GPIO.LOW:
             print("Obstacle détecté!")
-            tourner_servo(70)  # Tourne le servo de 70 degrés
-            tourner_servo(0)   # Reviens à la position initiale
+            tourner_servo(70) 
+            time.sleep(1)            # Tourne le servo de 70 degrés
+            tourner_servo(0)   #  Reviens à la position initiale
         else:
             print("Pas d'obstacle détecté.")
         time.sleep(0.1)
