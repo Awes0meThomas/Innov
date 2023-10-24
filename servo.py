@@ -10,7 +10,7 @@ def angle_to_percent(angle):
     angle_as_percent = angle * ratio
     return start + angle_as_percent
 
-GPIO.setmode(GPIO.BOARD)
+GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
 
 pwm_gpio = 18
@@ -19,7 +19,7 @@ GPIO.setup(pwm_gpio, GPIO.OUT)
 pwm = GPIO.PWM(pwm_gpio, frequence)
 
 pin_capteur = 17
-GPIO.setmode(GPIO.BCM)
+
 GPIO.setup(pin_capteur, GPIO.IN)
 
 def is_object_detected():
