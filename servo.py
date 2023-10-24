@@ -10,7 +10,7 @@ def angle_to_percent(angle):
     angle_as_percent = angle * ratio
     return start + angle_as_percent
 
-GPIO.setmode(GPIO.BCM)
+GPIO.setmode(GPIO.BOARD)
 GPIO.setwarnings(False)
 
 pwm_gpio = 18
