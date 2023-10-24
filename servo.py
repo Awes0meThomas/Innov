@@ -1,45 +1,35 @@
 import RPi.GPIO as GPIO
 import time
 
-def angle_to_percent(angle):
-    if angle > 180 or angle < 0:
-        return False
-    start = 4
-    end = 12.5
-    ratio = (end - start) / 180
-    angle_as_percent = angle * ratio
-    return start + angle_as_percent
+# Configuration des broches du capteur
+pin_capteur = 17  # Remplacez 17 par le numéro de la broche que vous utilisez
 
-GPIO.setmode(GPIO.BOARD)
-GPIO.setwarnings(False)
-
-pwm_gpio = 18
-frequence = 50
-GPIO.setup(pwm_gpio, GPIO.OUT)
-pwm = GPIO.PWM(pwm_gpio, frequence)
-
-pin_capteur = 17
-
+# Configuration des broches du Raspberry Pi
+GPIO.setmode(GPIO.BCM)
 GPIO.setup(pin_capteur, GPIO.IN)
 
-def is_object_detected():
-    return GPIO.input(pin_capteur) == GPIO.LOW
+# Configuration des broches du servo moteur
+pin_servo = 18  # Remplacez 18 par le numéro de la broche que vous utilisez
+GPIO.setup(pin_servo, GPIO.OUT)
 
-pwm.start(angle_to_percent(0))
-time.sleep(1)
+# Configuration du PWM pour le servo moteur
+pwm = GPIO.PWM(pin_servo, 50)  # Fréquence de 50 Hz
+pwm.start(0)
+
+def tourner_servo(angle):
+    duty_cycle = 2.5 + (12.5 - 2.5) * angle / 180.0
+    pwm.ChangeDutyCycle(duty_cycle)
+    time.sleep(1)
 
 try:
     while True:
-        if is_object_detected():
-            pwm.ChangeDutyCycle(angle_to_percent(70))
-            time.sleep(1)
-            pwm.ChangeDutyCycle(angle_to_percent(0))
-            time.sleep(1)
+        if GPIO.input(pin_capteur) == GPIO.LOW:
+            print("Obstacle détecté!")
+            tourner_servo(70)  # Tourne le servo de 70 degrés
+            tourner_servo(0)   # Reviens à la position initiale
         else:
-            time.sleep(1)
+            print("Pas d'obstacle détecté.")
+        time.sleep(0.1)
 
 except KeyboardInterrupt:
-    pass
-
-pwm.stop()
-GPIO.cleanup()
+    GPIO.cleanup()
