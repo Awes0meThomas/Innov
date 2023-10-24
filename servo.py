@@ -25,7 +25,7 @@ try:
         if GPIO.input(pin_capteur) == GPIO.LOW:
             if servo_position != 70:
                 tourner_servo(70)
-            time sleep(1)
+            time.sleep(1)
         else:
             if servo_position != 0:
                 tourner_servo(0)
