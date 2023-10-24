@@ -1,20 +1,42 @@
 import RPi.GPIO as GPIO
 import time
 
+def angle_to_percent(angle):
+    if angle > 180 or angle < 0:
+        return False
+    start = 4
+    end = 12.5
+    ratio = (end - start) / 180
+    angle_as_percent = angle * ratio
+    return start + angle_as_percent
 
-pin_capteur = 17  
+GPIO.setmode(GPIO.BOARD)
+GPIO.setwarnings(False)
+
+pwm_gpio = 12
+frequence = 50
+GPIO.setup(pwm_gpio, GPIO.OUT)
+pwm = GPIO.PWM(pwm_gpio, frequence)
+
+infrared_pin = 17
+GPIO.setup(infrared_pin, GPIO.IN)
 
 
-GPIO.setmode(GPIO.BCM)
-GPIO.setup(pin_capteur, GPIO.IN)
+pwm.start(angle_to_percent(0))
+time.sleep(1)
 
 try:
     while True:
-        if GPIO.input(pin_capteur) == GPIO.HIGH:
-            print("Obstacle détecté!")
+        if infrared_pin==GPIO.LOW:
+            pwm.ChangeDutyCycle(angle_to_percent(70))
+            time.sleep(1)
+            pwm.ChangeDutyCycle(angle_to_percent(0))
+            time.sleep(1)
         else:
-            print("Pas d'obstacle détecté.")
-        time.sleep(0.1)
+            time.sleep(1)
 
 except KeyboardInterrupt:
-    GPIO.cleanup()
+    pass
+
+pwm.stop()
+GPIO.cleanup()
