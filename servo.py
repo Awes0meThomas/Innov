@@ -18,18 +18,16 @@ frequence = 50
 GPIO.setup(pwm_gpio, GPIO.OUT)
 pwm = GPIO.PWM(pwm_gpio, frequence)
 
-infrared_pin = 19
-GPIO.setup(infrared_pin, GPIO.IN)
-
-def is_object_detected():
-    return GPIO.input(infrared_pin)
+pin_capteur = 19
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(pin_capteur, GPIO.IN)
 
 pwm.start(angle_to_percent(0))
 time.sleep(1)
 
 try:
     while True:
-        if is_object_detected():
+        if GPIO.input(pin_capteur) == GPIO.HIGH:
             pwm.ChangeDutyCycle(angle_to_percent(70))
             print("objet")
             time.sleep(1)
