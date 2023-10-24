@@ -31,8 +31,10 @@ try:
     while True:
         if is_object_detected():
             pwm.ChangeDutyCycle(angle_to_percent(70))
+            print("objet")
             time.sleep(1)
             pwm.ChangeDutyCycle(angle_to_percent(0))
+            print("objet retour à 0")
             time.sleep(1)
         else:
             time.sleep(1)
