@@ -1,10 +1,10 @@
 import RPi.GPIO as GPIO
 import time
 
-# Configuration des broches du capteur
-pin_capteur = 17  # Remplacez 17 par le numéro de la broche que vous utilisez
 
-# Configuration des broches du Raspberry Pi
+pin_capteur = 17  
+
+
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(pin_capteur, GPIO.IN)
 
