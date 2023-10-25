@@ -33,7 +33,7 @@ pwm_servo.start(0)
 
 # Set up neopixel
 NUM_LEDS = 144
-DATA_PIN = 24  # Change this to the BCM pin number
+DATA_PIN = 20  # Change this to the BCM pin number
 DELAY_MS = 50
 BUTTON_PIN = 2  # Change this to the BCM pin number
 
