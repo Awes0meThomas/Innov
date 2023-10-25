@@ -89,8 +89,20 @@ def loop():
         time.sleep(0.1)  # Vous pouvez ajuster la fréquence de vérification
 
 
+try:
+    pwm.start(angle_to_percent(0))
+    for _ in range(5):
+        loop()
+        time.sleep(1)
+
+    while True:
+        loop()
+
 except KeyboardInterrupt:
-    pass
+    pass  # Gère l'exception KeyboardInterrupt en ne faisant rien
+
+pwm.stop()
+GPIO.cleanup()
 
 pwm.stop()
 GPIO.cleanup()
