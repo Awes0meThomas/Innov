@@ -44,22 +44,22 @@ pixels = neopixel.NeoPixel(DATA_PIN, NUM_LEDS, auto_write=False)
 # Function to check if the servo motor is moving
 def is_servo_moving():
     def tourner_servo(angle):
-    global servo_position
-    duty_cycle = 2.5 + (12.5 - 2.5) * angle / 180.0
-    pwm.ChangeDutyCycle(duty_cycle)
-    servo_position = angle
-    time.sleep(1)
+        global servo_position
+        duty_cycle = 2.5 + (12.5 - 2.5) * angle / 180.0
+        pwm.ChangeDutyCycle(duty_cycle)
+        servo_position = angle
+        time.sleep(1)
 
-try:
-    while True:
-        if GPIO.input(pin_capteur) == GPIO.LOW:
-            if servo_position != 70:
-                tourner_servo(70)
-            time.sleep(1)
-        else:
-            if servo_position != 0:
-                tourner_servo(0)
-        time.sleep(0.1)
+    try:
+        while True:
+            if GPIO.input(pin_capteur) == GPIO.LOW:
+                if servo_position != 70:
+                    tourner_servo(70)
+                time.sleep(1)
+            else:
+                if servo_position != 0:
+                    tourner_servo(0)
+            time.sleep(0.1)
     pass
 
 # Function for the main loop
