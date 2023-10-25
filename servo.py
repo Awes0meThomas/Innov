@@ -67,37 +67,32 @@ def is_servo_moving():
         pass
 
 # Function for the main loop
+# Function for the main loop
 def loop():
-    error = 0  # Initialize error as 0
+    global servo_position
+    led_active = False  # Initialisez la variable à False
 
-    # Add code to check if the servo motor is moving and update the error accordingly
-    if is_servo_moving():
-        error = 1
-    else:
-        error = 0
-
-    if error == 2:
-        for i in range(NUM_LEDS):
-            pixels[i] = (0, 255, 0)  # Green
-        pixels.show()
-        time.sleep(0.2)
-        pixels.fill((0, 0, 0))  # Turn off all LEDs
-        pixels.show()
-        time.sleep(0.2)
-    elif error == 1:
-        for i in range(NUM_LEDS):
-            pixels[i] = (255, 0, 0)  # Red
-        pixels.show()
-        time.sleep(0.2)
-        pixels.fill((0, 0, 0))  # Turn off all LEDs
-        pixels.show()
-        time.sleep(0.2)
-    else:
-        for color in range(256):
+    while True:
+        if is_servo_moving():
+            # Le servo bouge, donc activez les LED
+            led_active = True
+        else:
+            # Le servo ne bouge pas, désactivez les LED
+            led_active = False
+        
+        if led_active:
+            # Activez les LED en utilisant votre code existant
             for i in range(NUM_LEDS):
-                pixels[i] = (color, 255, 255)  # Change the hue
+                pixels[i] = (255, 0, 0)  # Par exemple, allumez-les en rouge
             pixels.show()
-            time.sleep(DELAY_MS / 1000)  # Convert to seconds
+        else:
+            # Éteignez les LED
+            for i in range(NUM_LEDS):
+                pixels[i] = (0, 0, 0)  # Éteignez-les
+            pixels.show()
+        
+        time.sleep(0.1)  # Vous pouvez ajuster la fréquence de vérification
+  # Convert to seconds
 
 try:
     pwm.start(angle_to_percent(0))
