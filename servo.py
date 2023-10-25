@@ -1,5 +1,4 @@
 import time
-import board
 import neopixel
 import RPi.GPIO as GPIO
 
