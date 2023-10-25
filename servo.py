@@ -61,8 +61,8 @@ def is_servo_moving():
                 if servo_position != 0:
                     tourner_servo(0)
                 time.sleep(0.1)  # Corrected indentation here
-except KeyboardInterrupt:
-    pass
+    except KeyboardInterrupt:
+        pass
 
 # Function for the main loop
 def loop():
