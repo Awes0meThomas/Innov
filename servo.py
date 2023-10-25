@@ -35,9 +35,9 @@ pwm.start(0)
 
 # Set up neopixel
 NUM_LEDS = 144
-DATA_PIN = board.D23  # Change this to the BCM pin number
+DATA_PIN = board.D21  # Change this to the BCM pin number
 DELAY_MS = 50
-BUTTON_PIN = 23 # Change this to the BCM pin number
+BUTTON_PIN = 3 # Change this to the BCM pin number
 
 pixels = neopixel.NeoPixel(DATA_PIN, NUM_LEDS, auto_write=False)
 
