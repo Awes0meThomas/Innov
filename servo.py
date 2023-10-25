@@ -36,6 +36,7 @@ NUM_LEDS = 144
 DATA_PIN = 20  # Change this to the BCM pin number
 DELAY_MS = 50
 BUTTON_PIN = 2  # Change this to the BCM pin number
+GPIO.setup(DATA_PIN, GPIO.OUT)
 
 pixels = neopixel.NeoPixel(DATA_PIN, NUM_LEDS, auto_write=False)
 
