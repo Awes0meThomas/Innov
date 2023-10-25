@@ -42,6 +42,7 @@ BUTTON_PIN = 2  # Change this to the BCM pin number
 pixels = neopixel.NeoPixel(DATA_PIN, NUM_LEDS, auto_write=False)
 
 # Function to check if the servo motor is moving
+# Function to check if the servo motor is moving
 def is_servo_moving():
     def tourner_servo(angle):
         global servo_position
@@ -59,8 +60,9 @@ def is_servo_moving():
             else:
                 if servo_position != 0:
                     tourner_servo(0)
-            time.sleep(0.1)
-pass
+                time.sleep(0.1)  # Corrected indentation here
+except KeyboardInterrupt:
+    pass
 
 # Function for the main loop
 def loop():
