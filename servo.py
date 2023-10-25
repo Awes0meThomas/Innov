@@ -35,11 +35,11 @@ pwm_servo.start(0)
 
 # Configuration des LED NéoPixel
 NUM_LEDS = 144
-DATA_PIN = 21  # Utilisez le bon numéro de broche BCM
+DATA_PIN = board.D21  # Utilisez le bon numéro de broche BCM
 DELAY_MS = 50
 
 # Assurez-vous que DATA_PIN est correctement configuré
-pixels = neopixel.NeoPixel(DATA_PIN, NUM_LEDS, auto_write=False)
+pixels = neopixel.NeoPixel(board.D21, NUM_LEDS, auto_write=False)
 
 # Fonction pour tourner le servo
 def tourner_servo(angle):
