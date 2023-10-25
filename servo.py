@@ -68,40 +68,26 @@ def is_servo_moving():
 
 # Function for the main loop
 # Function for the main loop
+# Function for the main loop
 def loop():
     global servo_position
-    led_active = False  # Initialisez la variable à False
 
     while True:
         if is_servo_moving():
             # Le servo bouge, donc activez les LED
-            led_active = True
-        else:
-            # Le servo ne bouge pas, désactivez les LED
-            led_active = False
-        
-        if led_active:
-            # Activez les LED en utilisant votre code existant
             for i in range(NUM_LEDS):
                 pixels[i] = (255, 0, 0)  # Par exemple, allumez-les en rouge
             pixels.show()
         else:
-            # Éteignez les LED
+            # Le servo ne bouge pas, désactivez les LED
             for i in range(NUM_LEDS):
                 pixels[i] = (0, 0, 0)  # Éteignez-les
             pixels.show()
-        
+
+        # Ajoutez le reste de votre code pour gérer le comportement souhaité de vos LED lorsque le servo bouge.
+
         time.sleep(0.1)  # Vous pouvez ajuster la fréquence de vérification
-  # Convert to seconds
 
-try:
-    pwm.start(angle_to_percent(0))
-    for _ in range(5):
-        loop()
-        time.sleep(1)
-
-    while True:
-        loop()
 
 except KeyboardInterrupt:
     pass
