@@ -1,5 +1,4 @@
 import time
-import neopixel
 import RPi.GPIO as GPIO
 
 # Set up servo motor
