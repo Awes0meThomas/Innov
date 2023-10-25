@@ -37,7 +37,7 @@ DATA_PIN = board.D21  # Change this to the BCM pin number
 DELAY_MS = 50
 BUTTON_PIN = 2  # Change this to the BCM pin number
 
-pixels = neopixel.NeoPixel(DATA_PIN, NUM_LEDS, auto_write=False)
+pixels = neopixel.NeoPixel(board.D21, NUM_LEDS, auto_write=False)
 
 # Function to check if the servo motor is moving
 # Function to check if the servo motor is moving
