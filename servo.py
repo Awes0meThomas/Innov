@@ -31,6 +31,8 @@ GPIO.setup(pin_servo, GPIO.OUT)
 pwm = GPIO.PWM(pin_servo, 50)
 pwm.start(0)
 
+servo_position = 0
+
 
 
 # Set up neopixel
