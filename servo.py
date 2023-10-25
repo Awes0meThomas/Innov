@@ -60,6 +60,7 @@ def is_servo_moving():
                 if servo_position != 0:
                     tourner_servo(0)
             time.sleep(0.1)
+pass
 
 # Function for the main loop
 def loop():
