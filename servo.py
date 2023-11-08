@@ -1,7 +1,7 @@
-import neopixel
 import board
-import time
+import neopixel
 import RPi.GPIO as GPIO
+import time
 
 def angle_to_percent(angle):
     if angle > 180 or angle < 0:
@@ -26,38 +26,33 @@ GPIO.setup(pin_capteur, GPIO.IN)
 pin_servo = 18
 GPIO.setup(pin_servo, GPIO.OUT)
 
-pwm = GPIO.PWM(pin_servo, 50)
-pwm.start(0)
+pwm_servo = GPIO.PWM(pin_servo, 50)
+pwm_servo.start(0)
 
 servo_position = 0
 
 NUM_LEDS = 144
 DATA_PIN = board.D21
-DELAY_MS = 50
-BUTTON_PIN = 2
 
-pixels = neopixel.NeoPixel(board.D21, NUM_LEDS, auto_write=False)
+pixels = neopixel.NeoPixel(DATA_PIN, NUM_LEDS, auto_write=False)
+
+def tourner_servo(angle):
+    global servo_position
+    duty_cycle = 2.5 + (12.5 - 2.5) * angle / 180.0
+    pwm_servo.ChangeDutyCycle(duty_cycle)
+    servo_position = angle
+    time.sleep(1)
 
 def is_servo_moving():
-    def tourner_servo(angle):
-        global servo_position
-        duty_cycle = 2.5 + (12.5 - 2.5) * angle / 180.0
-        pwm.ChangeDutyCycle(duty_cycle)
-        servo_position = angle
+    if GPIO.input(pin_capteur) == GPIO.LOW:
+        if servo_position != 70:
+            tourner_servo(70)
         time.sleep(1)
-
-    try:
-        while True:
-            if GPIO.input(pin_capteur) == GPIO.LOW:
-                if servo_position != 70:
-                    tourner_servo(70)
-                time.sleep(1)
-            else:
-                if servo_position != 0:
-                    tourner_servo(0)
-                time.sleep(0.1)
-    except KeyboardInterrupt:
-        pass
+    else:
+        if servo_position != 0:
+            tourner_servo(0)
+        time.sleep(0.1)
+    return True
 
 def loop():
     global servo_position
@@ -86,5 +81,5 @@ try:
 except KeyboardInterrupt:
     pass
 
-pwm.stop()
+pwm_servo.stop()
 GPIO.cleanup()
