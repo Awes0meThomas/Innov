@@ -53,7 +53,7 @@ def is_servo_moving():
             tourner_servo(0)
         time.sleep(0.1)
     return True
-
+gc.collect()
 def loop():
     global servo_position
 
