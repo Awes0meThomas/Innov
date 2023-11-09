@@ -2,6 +2,7 @@ import board
 import neopixel
 import RPi.GPIO as GPIO
 import time
+import gc  
 
 def angle_to_percent(angle):
     if angle > 180 or angle < 0:
@@ -66,7 +67,7 @@ def loop():
             for i in range(NUM_LEDS):
                 pixels[i] = (0, 0, 0)
             pixels.show()
-        gc.collect()
+        gc.collect() 
         time.sleep(0.1)
 
 try:
