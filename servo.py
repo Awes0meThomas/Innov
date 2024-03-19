@@ -1,5 +1,6 @@
 from gpiozero import AngularServo, DigitalInputDevice
 from signal import pause
+from time import sleep
 
 pin_capteur = 17
 capteur = DigitalInputDevice(pin_capteur)
