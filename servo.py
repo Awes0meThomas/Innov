@@ -1,33 +1,19 @@
-import pigpio
-import time
-
-pi = pigpio.pi()
+from gpiozero import AngularServo, DigitalInputDevice
+from signal import pause
 
 pin_capteur = 17
-pi.set_mode(pin_capteur, pigpio.INPUT)
+capteur = DigitalInputDevice(pin_capteur)
 
 pin_servo = 18
-pi.set_mode(pin_servo, pigpio.OUTPUT)
-
-servo_position = 0
-
-def tourner_servo(angle):
-    global servo_position
-    pulse_width = (angle / 180.0 * 1000) + 1000
-    pi.set_servo_pulsewidth(pin_servo, pulse_width)
-    servo_position = angle
-    time.sleep(1)
+servo = AngularServo(pin_servo, min_angle=0, max_angle=70)
 
 try:
     while True:
-        if pi.read(pin_capteur) == 0:
-            if servo_position != 70:
-                tourner_servo(180)
-            time.sleep(1)
+        if capteur.is_active:
+            servo.angle = 180
         else:
-            if servo_position != 0:
-                tourner_servo(0)
-        time.sleep(0.1)
+            servo.angle = 0
+        pause()
 
 except KeyboardInterrupt:
-    pi.stop()
+    pass
