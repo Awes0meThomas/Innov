@@ -22,7 +22,7 @@ try:
     while True:
         if pi.read(pin_capteur) == 0:
             if servo_position != 70:
-                tourner_servo(70)
+                tourner_servo(180)
             time.sleep(1)
         else:
             if servo_position != 0:
