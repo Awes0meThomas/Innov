@@ -1,6 +1,6 @@
 from gpiozero import AngularServo, DigitalInputDevice
-from signal import pause
 from time import sleep
+from signal import pause
 
 pin_capteur = 17
 capteur = DigitalInputDevice(pin_capteur)
@@ -12,11 +12,9 @@ try:
     while True:
         if capteur.is_active:
             servo.angle = 180
-            sleep(1)
         else:
             servo.angle = 0
-            sleep(1)
-        pause()
+        sleep(1)
 
 except KeyboardInterrupt:
     pass
