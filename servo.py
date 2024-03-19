@@ -1,28 +1,26 @@
-import RPi.GPIO as GPIO
+import pigpio
 import time
 
+pi = pigpio.pi()
+
 pin_capteur = 17
-GPIO.setmode(GPIO.BCM)
-GPIO.setup(pin_capteur, GPIO.IN)
+pi.set_mode(pin_capteur, pigpio.INPUT)
 
 pin_servo = 18
-GPIO.setup(pin_servo, GPIO.OUT)
-
-pwm = GPIO.PWM(pin_servo, 50)
-pwm.start(0)
+pi.set_mode(pin_servo, pigpio.OUTPUT)
 
 servo_position = 0
 
 def tourner_servo(angle):
     global servo_position
-    duty_cycle = 2.5 + (12.5 - 2.5) * angle / 180.0
-    pwm.ChangeDutyCycle(duty_cycle)
+    pulse_width = (angle / 180.0 * 1000) + 1000
+    pi.set_servo_pulsewidth(pin_servo, pulse_width)
     servo_position = angle
     time.sleep(1)
 
 try:
     while True:
-        if GPIO.input(pin_capteur) == GPIO.LOW:
+        if pi.read(pin_capteur) == 0:
             if servo_position != 70:
                 tourner_servo(70)
             time.sleep(1)
@@ -32,4 +30,4 @@ try:
         time.sleep(0.1)
 
 except KeyboardInterrupt:
-    GPIO.cleanup()
+    pi.stop()
