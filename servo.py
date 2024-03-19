@@ -11,8 +11,10 @@ try:
     while True:
         if capteur.is_active:
             servo.angle = 180
+            sleep(1)
         else:
             servo.angle = 0
+            sleep(1)
         pause()
 
 except KeyboardInterrupt:
