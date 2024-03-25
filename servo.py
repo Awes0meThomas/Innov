@@ -1,19 +1,13 @@
-import RPi.GPIO as GPIO
+from gpiozero import AngularServo, DigitalInputDevice
 import time
 import cv2
 import numpy as np
-from gpiozero import AngularServo, DigitalInputDevice
 
 pin_cam = 17
 pin_servo = 18
 
-GPIO.setmode(GPIO.BCM)
-GPIO.setup(pin_servo, GPIO.OUT)
-
-pwm = GPIO.PWM(pin_servo, 50)
-pwm.start(0)
-
-servo_position = 0
+capteur = DigitalInputDevice(pin_cam)
+servo = AngularServo(pin_servo, min_angle=0, max_angle=180)
 
 net = cv2.dnn.readNet("yolov4.weights", "yolov4.cfg")
 classes = []
@@ -22,14 +16,8 @@ with open("coco.names", "r") as f:
 layer_names = net.getLayerNames()
 output_layers = [layer_names[i - 1] for i in net.getUnconnectedOutLayers()]
 
-capteur = DigitalInputDevice(pin_cam)
-servo = AngularServo(pin_servo, min_angle=0, max_angle=180)
-
 def tourner_servo(angle):
-    global servo_position
-    duty_cycle = 2.5 + (12.5 - 2.5) * angle / 180.0
-    pwm.ChangeDutyCycle(duty_cycle)
-    servo_position = angle
+    servo.angle = angle
     time.sleep(1)
 
 try:
@@ -74,4 +62,4 @@ try:
                 tourner_servo(0)
 
 except KeyboardInterrupt:
-    GPIO.cleanup()
+    pass
