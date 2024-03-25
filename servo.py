@@ -1,7 +1,8 @@
 from gpiozero import AngularServo, DigitalInputDevice
 import time
-import cv2
 import numpy as np
+from picamera import PiCamera
+import cv2
 
 pin_cam = 17
 pin_servo = 18
@@ -21,10 +22,14 @@ def tourner_servo(angle):
     time.sleep(1)
 
 try:
-    while True:
-        if capteur.is_active:
-            cap = cv2.VideoCapture(0)
-            ret, frame = cap.read()
+    with PiCamera() as camera:
+        camera.resolution = (640, 480)
+        camera.framerate = 30
+
+        while True:
+            camera.capture('image.jpg')
+
+            frame = cv2.imread('image.jpg')
             height, width, channels = frame.shape
 
             blob = cv2.dnn.blobFromImage(frame, 0.00392, (416, 416), (0, 0, 0), True, crop=False)
@@ -51,8 +56,6 @@ try:
                         if label == 'square':
                             square_detected = True
                             break
-
-            cap.release()
 
             if square_detected:
                 while not capteur.is_active:
