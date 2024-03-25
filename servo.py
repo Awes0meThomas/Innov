@@ -1,8 +1,8 @@
-from gpiozero import AngularServo, DigitalInputDevice
 import time
-import numpy as np
-from picamera import PiCamera
 import cv2
+import numpy as np
+from gpiozero import AngularServo, DigitalInputDevice
+from picamera2 import Picamera2, Preview
 
 pin_cam = 17
 pin_servo = 18
@@ -21,48 +21,55 @@ def tourner_servo(angle):
     servo.angle = angle
     time.sleep(1)
 
-try:
-    with PiCamera() as camera:
-        camera.resolution = (640, 480)
-        camera.framerate = 30
+def start_recording():
+    try:
+        # Démarrage de la caméra
+        with PiCamera2() as picam:
+            picam.start_recording("video.h264")
 
-        while True:
-            camera.capture('image.jpg')
+            while True:
+                # Capture d'une image
+                frame = picam.read()
 
-            frame = cv2.imread('image.jpg')
-            height, width, channels = frame.shape
+                # Traitement de l'image avec YOLOv4
+                height, width, channels = frame.shape
+                blob = cv2.dnn.blobFromImage(frame, 0.00392, (416, 416), (0, 0, 0), True, crop=False)
+                net.setInput(blob)
+                outs = net.forward(output_layers)
 
-            blob = cv2.dnn.blobFromImage(frame, 0.00392, (416, 416), (0, 0, 0), True, crop=False)
-            net.setInput(blob)
-            outs = net.forward(output_layers)
+                square_detected = False
 
-            square_detected = False
+                for out in outs:
+                    for detection in out:
+                        scores = detection[5:]
+                        class_id = np.argmax(scores)
+                        confidence = scores[class_id]
+                        if confidence > 0.5:
+                            center_x = int(detection[0] * width)
+                            center_y = int(detection[1] * height)
+                            w = int(detection[2] * width)
+                            h = int(detection[3] * height)
 
-            for out in outs:
-                for detection in out:
-                    scores = detection[5:]
-                    class_id = np.argmax(scores)
-                    confidence = scores[class_id]
-                    if confidence > 0.5:
-                        center_x = int(detection[0] * width)
-                        center_y = int(detection[1] * height)
-                        w = int(detection[2] * width)
-                        h = int(detection[3] * height)
+                            x = int(center_x - w / 2)
+                            y = int(center_y - h / 2)
 
-                        x = int(center_x - w / 2)
-                        y = int(center_y - h / 2)
+                            label = str(classes[class_id])
+                            if label == 'square':
+                                square_detected = True
+                                break
 
-                        label = str(classes[class_id])
-                        if label == 'square':
-                            square_detected = True
-                            break
+                if square_detected:
+                    while not capteur.is_active:
+                        pass
+                    tourner_servo(180)
+                else:
+                    tourner_servo(0)
 
-            if square_detected:
-                while not capteur.is_active:
-                    pass
-                tourner_servo(180)
-            else:
-                tourner_servo(0)
+    except KeyboardInterrupt:
+        pass
+    finally:
+        # Arrêt de l'enregistrement
+        picam.stop_recording()
 
-except KeyboardInterrupt:
-    pass
+# Appel de la fonction pour démarrer l'enregistrement
+start_recording()
