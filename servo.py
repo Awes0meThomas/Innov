@@ -2,6 +2,7 @@ import cv2
 import numpy as np
 from gpiozero import AngularServo, DigitalInputDevice
 from time import sleep
+import tensorflow as tf 
 
 pin_capteur = 17
 capteur = DigitalInputDevice(pin_capteur)
@@ -21,38 +22,29 @@ def detect_rectangle(image):
             return True
     return False
 
-model = cv2.dnn.readNetFromTensorflow('fichier.pb', 'fichier.pbtxt')
-
-def on_activation():
-    servo.angle = 180
-
-def on_deactivation():
-    servo.angle = 0
-
 try:
     while True:
         image = cv2.imread('test.jpg')
 
-        blob = cv2.dnn.blobFromImage(image, size=(300, 300), swapRB=True, crop=False)
-        model.setInput(blob)
-        output = model.forward()
+        resized = cv2.resize(image, (224, 224))
+        resized = tf.keras.preprocessing.image.img_to_array(resized)
+        resized = tf.keras.applications.mobilenet_v2.preprocess_input(resized)
+
+        predictions = model.predict(np.array([resized]))
+        decoded_predictions = tf.keras.applications.mobilenet_v2.decode_predictions(predictions, top=5)
 
         rectangle_detected = False
-        for detection in output[0, 0, :, :]:
-            confidence = detection[2]
-            if confidence > 0.5:  
-                class_id = int(detection[1])
-                if class_id == 0:  
-                    x1, y1, x2, y2 = (detection[3:7] * np.array([image.shape[1], image.shape[0], image.shape[1], image.shape[0]])).astype('int')
-                    roi = image[y1:y2, x1:x2]
-                    if detect_rectangle(roi):
-                        rectangle_detected = True
-                        break  
+        for _, label, _ in decoded_predictions[0]:
+            if label in ["remote", "television", "laptop", "mouse", "keyboard"]:
+                rectangle_detected = True
+                break  
 
         if rectangle_detected:
-            capteur.when_activated = on_activation
-            capteur.when_deactivated = on_deactivation
+            servo.angle = 180
+            capteur.when_activated = lambda: servo.detach()
+            capteur.when_deactivated = lambda: servo.attach()
         else:
+            servo.angle = 0
             capteur.when_activated = None
             capteur.when_deactivated = None
 
