@@ -5,6 +5,8 @@ from time import sleep
 import tensorflow as tf 
 from picamera import PiCamera
 
+
+model = tf.keras.application.MobileNetV2(weights='imagenet')
 # Initialisation de la caméra
 camera = PiCamera()
 
