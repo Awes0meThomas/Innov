@@ -3,14 +3,11 @@ import numpy as np
 from gpiozero import AngularServo, DigitalInputDevice
 from time import sleep
 
-
 pin_capteur = 17
 capteur = DigitalInputDevice(pin_capteur)
 
-
 pin_servo = 18
 servo = AngularServo(pin_servo, min_angle=0, max_angle=180)
-
 
 def detect_rectangle(image):
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
@@ -24,21 +21,22 @@ def detect_rectangle(image):
             return True
     return False
 
-
 model = cv2.dnn.readNetFromTensorflow('fichier.pb', 'fichier.pbtxt')
 
+def on_activation():
+    servo.angle = 180
+
+def on_deactivation():
+    servo.angle = 0
 
 try:
     while True:
-        
         image = cv2.imread('test.jpg')
 
-        
         blob = cv2.dnn.blobFromImage(image, size=(300, 300), swapRB=True, crop=False)
         model.setInput(blob)
         output = model.forward()
 
-        
         rectangle_detected = False
         for detection in output[0, 0, :, :]:
             confidence = detection[2]
@@ -52,11 +50,9 @@ try:
                         break  
 
         if rectangle_detected:
-            
-            capteur.when_activated = lambda: servo.angle = 180
-            capteur.when_deactivated = lambda: servo.angle = 0
+            capteur.when_activated = on_activation
+            capteur.when_deactivated = on_deactivation
         else:
-            
             capteur.when_activated = None
             capteur.when_deactivated = None
 
