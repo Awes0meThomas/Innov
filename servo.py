@@ -3,12 +3,11 @@ import numpy as np
 from gpiozero import AngularServo, DigitalInputDevice
 from time import sleep
 import tensorflow as tf 
-from picamera2 import PiCamera2
-from time import sleep
-
+from picamera import PiCamera
+# Import the PiCamera class from the correct package
 
 # Initialisation de la caméra
-camera = PiCamera2()
+camera = PiCamera()
 
 # Prévisualisation de la caméra pendant 5 secondes
 camera.start_preview()
@@ -41,7 +40,7 @@ def detect_rectangle(image):
 
 try:
     while True:
-        image = cv2.imread('test.jpg')
+        image = cv2.imread('screenshot.jpg')  # Corrected file name
 
         resized = cv2.resize(image, (224, 224))
         resized = tf.keras.preprocessing.image.img_to_array(resized)
