@@ -1,21 +1,27 @@
-import cv2
 import numpy as np
 from gpiozero import AngularServo, DigitalInputDevice
 from time import sleep
 import tensorflow as tf 
 from picamera import PiCamera
+from picamera.array import PiRGBArray
 
+model = tf.keras.applications.MobileNetV2(weights='imagenet')
 
-model = tf.keras.application.MobileNetV2(weights='imagenet')
-# Initialisation de la caméra
+# Initialize the PiCamera
 camera = PiCamera()
 
-# Capture de la photo et sauvegarde dans un fichier
-camera.resolution = (640, 480)  # Set resolution as needed
-camera.start_preview()
-sleep(5)
-camera.capture('screenshot.jpg')
-camera.stop_preview()
+# Initialize PiRGBArray to store the captured image
+raw_capture = PiRGBArray(camera)
+
+# Allow the camera to warm up
+sleep(0.1)
+
+# Capture a frame from the camera
+camera.capture(raw_capture, format="bgr")
+image = raw_capture.array
+
+# Release the PiRGBArray and camera resources
+raw_capture.truncate(0)
 camera.close()
 
 pin_capteur = 17
@@ -38,8 +44,6 @@ def detect_rectangle(image):
 
 try:
     while True:
-        image = cv2.imread('screenshot.jpg')  # Load the captured image
-
         resized = cv2.resize(image, (224, 224))
         resized = tf.keras.preprocessing.image.img_to_array(resized)
         resized = tf.keras.applications.mobilenet_v2.preprocess_input(resized)
