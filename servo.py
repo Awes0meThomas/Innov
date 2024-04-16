@@ -1,77 +1,64 @@
-import time
 import cv2
 import numpy as np
 from gpiozero import AngularServo, DigitalInputDevice
-from picamera2 import PiCamera, Preview
+from time import sleep
 
-pin_cam = 17
+
+pin_capteur = 17
+capteur = DigitalInputDevice(pin_capteur)
+
+
 pin_servo = 18
-
-capteur = DigitalInputDevice(pin_cam)
 servo = AngularServo(pin_servo, min_angle=0, max_angle=180)
 
-net = cv2.dnn.readNet("yolov4.weights", "yolov4.cfg")
-classes = []
-with open("coco.names", "r") as f:
-    classes = [line.strip() for line in f.readlines()]
-layer_names = net.getLayerNames()
-output_layers = [layer_names[i - 1] for i in net.getUnconnectedOutLayers()]
 
-def tourner_servo(angle):
-    servo.angle = angle
-    time.sleep(1)
+def detect_rectangle(image):
+    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    _, binary = cv2.threshold(gray, 127, 255, cv2.THRESH_BINARY)
+    contours, _ = cv2.findContours(binary, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    
+    for contour in contours:
+        perimeter = cv2.arcLength(contour, True)
+        approx = cv2.approxPolyDP(contour, 0.02 * perimeter, True)
+        if len(approx) == 4:
+            return True
+    return False
 
-def start_recording():
-    picam = PiCamera()
-    try:
-        # Configuration de la caméra
-        picam.start_recording("video.h264")
 
-        while True:
-            # Capture d'une image
-            frame = np.empty((480, 640, 3), dtype=np.uint8)
-            picam.capture(frame, format='bgr')
+model = cv2.dnn.readNetFromTensorflow('fichier.pb', 'fichier.pbtxt')
 
-            # Traitement de l'image avec YOLOv4
-            height, width, channels = frame.shape
-            blob = cv2.dnn.blobFromImage(frame, 0.00392, (416, 416), (0, 0, 0), True, crop=False)
-            net.setInput(blob)
-            outs = net.forward(output_layers)
 
-            square_detected = False
+try:
+    while True:
+        
+        image = cv2.imread('test.jpg')
 
-            for out in outs:
-                for detection in out:
-                    scores = detection[5:]
-                    class_id = np.argmax(scores)
-                    confidence = scores[class_id]
-                    if confidence > 0.5:
-                        center_x = int(detection[0] * width)
-                        center_y = int(detection[1] * height)
-                        w = int(detection[2] * width)
-                        h = int(detection[3] * height)
+        
+        blob = cv2.dnn.blobFromImage(image, size=(300, 300), swapRB=True, crop=False)
+        model.setInput(blob)
+        output = model.forward()
 
-                        x = int(center_x - w / 2)
-                        y = int(center_y - h / 2)
+        
+        rectangle_detected = False
+        for detection in output[0, 0, :, :]:
+            confidence = detection[2]
+            if confidence > 0.5:  
+                class_id = int(detection[1])
+                if class_id == 0:  
+                    x1, y1, x2, y2 = (detection[3:7] * np.array([image.shape[1], image.shape[0], image.shape[1], image.shape[0]])).astype('int')
+                    roi = image[y1:y2, x1:x2]
+                    if detect_rectangle(roi):
+                        rectangle_detected = True
+                        break  
 
-                        label = str(classes[class_id])
-                        if label == 'square':
-                            square_detected = True
-                            break
+        if rectangle_detected:
+            
+            capteur.when_activated = lambda: servo.angle = 180
+            capteur.when_deactivated = lambda: servo.angle = 0
+        else:
+            
+            capteur.when_activated = None
+            capteur.when_deactivated = None
 
-            if square_detected:
-                while not capteur.is_active:
-                    pass
-                tourner_servo(180)
-            else:
-                tourner_servo(0)
-
-    except KeyboardInterrupt:
-        pass
-    finally:
-        # Arrêt de l'enregistrement
-        picam.stop_recording()
-        picam.close()
-
-# Appel de la fonction pour démarrer l'enregistrement
-start_recording()
+except KeyboardInterrupt:
+    pass
