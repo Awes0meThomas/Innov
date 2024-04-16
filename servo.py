@@ -34,6 +34,15 @@ try:
     while True:
         ret, frame = camera.read()  # Capture frame from the camera
 
+        if not ret or frame is None:
+            print("Error: Failed to capture frame from the camera.")
+            continue  # Skip processing if frame is empty
+
+        # Ensure the frame has valid dimensions
+        if frame.shape[0] <= 0 or frame.shape[1] <= 0:
+            print("Error: Invalid frame dimensions.")
+            continue  # Skip processing if frame dimensions are invalid
+
         resized = cv2.resize(frame, (224, 224))
         resized = tf.keras.preprocessing.image.img_to_array(resized)
         resized = tf.keras.applications.mobilenet_v2.preprocess_input(resized)
